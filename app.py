@@ -54,14 +54,16 @@ st.markdown("""
 # Información del entorno
 st.write("Versión de Python:", platform.python_version())
 
-# Cargar modelo
-model = load_model('keras_model.h5')
+# ✅ Cargar modelo
+model = load_model("keras_model.h5")
+
+# Estructura de datos
 data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
 
 # Título e imagen principal
 st.title("💜 Reconocimiento de Imágenes")
 
-image = Image.open('cinna3.jpeg')
+image = Image.open("cinna3.jpeg")
 st.image(image, width=350)
 
 with st.sidebar:
