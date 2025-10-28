@@ -5,130 +5,95 @@ from PIL import Image as Image, ImageOps as ImagOps
 from keras.models import load_model
 import platform
 
-# CONFIGURACIÓN GENERAL
-st.set_page_config(
-    page_title="Reconocimiento de Imágenes",
-    page_icon="🧠",
-    layout="centered"
-)
-
-# 🎨 ESTILO LAVANDA-VIOLETA
+# 🌸 Estilos personalizados (lavanda + violeta)
 st.markdown("""
     <style>
-    [data-testid="stAppViewContainer"] {
-        background: linear-gradient(180deg, #e8dcff 0%, #d7c4ff 100%);
-        color: #22143d;
+    /* Fondo general */
+    .stApp {
+        background-color: #EADCF8;
+        color: #2E1A47;
         font-family: 'Poppins', sans-serif;
     }
 
-    .block-container {
-        background: #faf7ff;
-        border: 1px solid #cbb3ff;
-        border-radius: 16px;
-        padding: 2rem 2.2rem;
-        box-shadow: 0 10px 24px rgba(34, 20, 61, 0.12);
-    }
-
-    h1, h2, h3, h4 {
-        color: #3b2168;
+    /* Título principal */
+    h1 {
+        color: #5B3EA1;
         text-align: center;
         font-weight: 700;
     }
 
-    p, li, label {
-        color: #22143d;
-        font-size: 15px;
+    /* Subtítulos */
+    h2, h3 {
+        color: #6A42C2;
     }
 
-    section[data-testid="stSidebar"] {
-        background: #efe6ff;
-        border-right: 2px solid #c9b1ff;
-        color: #2a1d5c;
-    }
-
-    section[data-testid="stSidebar"] * {
-        color: #2a1d5c !important;
-        font-size: 15px;
-    }
-
+    /* Botones */
     div.stButton > button {
-        background-color: #8b6aff;
-        color: white !important;
-        font-weight: 700;
+        background-color: #7B5CD6;
+        color: white;
+        border: none;
         border-radius: 10px;
-        border: 1px solid #6f51ea;
-        box-shadow: 0 6px 14px rgba(34, 20, 61, 0.18);
-        font-size: 16px;
-        padding: 9px 24px;
-        transition: all 0.2s ease;
+        padding: 0.6em 1.2em;
+        font-weight: 600;
+        transition: 0.3s;
     }
-
     div.stButton > button:hover {
-        background-color: #6f51ea;
-        transform: translateY(-1px);
+        background-color: #5B3EA1;
+        color: #fff;
+        transform: scale(1.03);
     }
 
-    [data-testid="stHeader"] {
-        background: linear-gradient(90deg, #5a3ccf 0%, #7b59e3 100%) !important;
-        color: white !important;
-        height: 3.5rem;
-        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.25);
+    /* Sidebar */
+    section[data-testid="stSidebar"] {
+        background-color: #D8C3F1;
+        color: #2E1A47;
     }
-
-    audio, img {
-        border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-
     </style>
 """, unsafe_allow_html=True)
 
-# Muestra la versión de Python
-st.caption(f"🐍 Versión de Python: {platform.python_version()}")
+# Información del entorno
+st.write("Versión de Python:", platform.python_version())
 
-# CARGA DEL MODELO
+# Cargar modelo
 model = load_model('keras_model.h5')
 data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
 
-# TÍTULO E IMAGEN PRINCIPAL
-st.title("🔍 Reconocimiento de Imágenes con Teachable Machine")
+# Título e imagen principal
+st.title("💜 Reconocimiento de Imágenes")
+
 image = Image.open('cinna3.jpeg')
 st.image(image, width=350)
 
-# SIDEBAR
 with st.sidebar:
-    st.subheader("🧠 Instrucciones")
-    st.write("Usa un modelo entrenado en **Teachable Machine** para identificar objetos en tus fotos.")
-    st.write("Presiona el botón de cámara para capturar una imagen y ver el resultado.")
+    st.subheader("🧠 Identificador de imágenes")
+    st.write("Usa un modelo entrenado en Teachable Machine para reconocer objetos o gestos.")
+    st.info("Toma una foto o carga una imagen para probar el modelo.")
 
-# CAPTURA DE IMAGEN
-img_file_buffer = st.camera_input("📸 Toma una Foto")
+# Captura de imagen
+img_file_buffer = st.camera_input("📷 Toma una Foto")
 
 if img_file_buffer is not None:
-    # Procesamiento de imagen
+    data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
     img = Image.open(img_file_buffer)
+
+    # Ajuste de tamaño
     newsize = (224, 224)
     img = img.resize(newsize)
-
     img_array = np.array(img)
+
+    # Normalización
     normalized_image_array = (img_array.astype(np.float32) / 127.0) - 1
     data[0] = normalized_image_array
 
-    # Inferencia
+    # Predicción
     prediction = model.predict(data)
-    print(prediction)
 
-    # RESULTADOS
+    # Resultados
     st.markdown("---")
-    st.subheader("🎯 Resultado de la Predicción:")
+    st.subheader("📊 Resultados del modelo")
 
     if prediction[0][0] > 0.5:
-        st.success(f"➡️ Izquierda — **Probabilidad:** {prediction[0][0]:.3f}")
-    elif prediction[0][1] > 0.5:
-        st.success(f"⬆️ Arriba — **Probabilidad:** {prediction[0][1]:.3f}")
-    else:
-        st.info("❓ No se detectó una categoría con suficiente confianza.")
-
-# PIE DE PÁGINA
-st.markdown("---")
-st.caption("💜 Desarrollado con Streamlit + Teachable Machine")
+        st.success(f"Izquierda → Probabilidad: **{prediction[0][0]:.2f}**")
+    if prediction[0][1] > 0.5:
+        st.info(f"Arriba → Probabilidad: **{prediction[0][1]:.2f}**")
+    # Si el modelo tiene más salidas, pueden agregarse aquí sin alterar la lógica base
